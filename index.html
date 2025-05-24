@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Page Replacement Simulator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #f7971e, #ffd200);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      overflow: hidden;
+    }
+    .start-container {
+      text-align: center;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(10px);
+      width: 90%;
+      max-width: 600px;
+    }
+    .start-container h1 {
+      font-size: 48px;
+      margin-bottom: 20px;
+    }
+    .start-container select {
+      padding: 12px 16px;
+      font-size: 18px;
+      margin-bottom: 20px;
+      border: none;
+      border-radius: 10px;
+      outline: none;
+      color: #fff;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(5px);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      appearance: none;
+      width: 80%;
+      max-width: 300px;
+    }
+    option {
+      color: #000;
+    }
+    .start-container button {
+      display: block;
+      background: white;
+      color: #ff0000;
+      padding: 15px 30px;
+      font-size: 20px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      margin: 0 auto;
+    }
+    .start-container button:hover {
+      background: #dcdcdc;
+    }
+    .loader {
+      border: 8px solid #f3f3f3;
+      border-top: 8px solid #2196f3;
+      border-radius: 50%;
+      width: 80px;
+      height: 80px;
+      animation: spin 1s linear infinite;
+      display: none;
+      margin: 20px auto;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="start-container">
+  <h1>Page Replacement Simulator</h1>
+  <p style="max-width: 700px; font-size: 1.1em; line-height: 1.6; margin: 0 auto 20px;">
+    <strong>Page Replacement</strong> is a memory management technique used by an operating system when a program tries to access a page (a fixed-size block of memory) that is not currently in physical memory (RAM).
+    <br>
+    <br>
+    Select an algorithm below to simulate how page replacement works.
+  </p>
+
+  <!-- DROPDOWN placed ABOVE the button -->
+  <select id="algoSelect">
+    <option value="fifo.html">FIFO (First In First Out)</option>
+    <option value="lru.html">LRU (Least Recently Used)</option>
+  </select>
+
+  <button onclick="startSimulation()">Start</button>
+  <div id="loader" class="loader"></div>
+</div>
+
+<script>
+function startSimulation() {
+  document.getElementById('loader').style.display = 'block';
+  document.querySelector('button').style.display = 'none';
+
+  const selected = document.getElementById('algoSelect').value;
+
+  setTimeout(() => {
+    window.location.href = selected;
+  }, 1500);
+}
+</script>
+
+</body>
+</html>

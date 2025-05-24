@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FIFO Simulator</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      height: auto;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow-y: auto;
+    }
+    .container {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 30px;
+      width: 90%;
+      max-width: 700px;
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+      color: #ffffff;
+      text-align: center;
+      animation: fadeIn 1s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin: 12px 0;
+      font-size: 16px;
+      border: none;
+      border-radius: 10px;
+    }
+    input {
+      background: rgba(255, 255, 255, 0.3);
+      color: #000;
+    }
+    button {
+      background-color: #11cbb2;
+      color: white;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background-color: #16995c;
+    }
+    .frame {
+      display: flex;
+      justify-content: center;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+    .frame div {
+      width: 60px;
+      height: 60px;
+      margin: 5px;
+      background: rgba(255,255,255,0.7);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: #333;
+      font-size: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    }
+    .steps {
+      margin-top: 20px;
+      text-align: left;
+    }
+    .hit {
+      color: #00ff7f;
+      font-weight: bold;
+    }
+    .miss {
+      color: #ff4d4d;
+      font-weight: bold;
+    }
+    #total {
+      margin-top: 20px;
+      font-size: 24px;
+      font-weight: bold;
+    }
+    .back-btn {
+      margin-top: 20px;
+    }
+    .back-btn a {
+      color: #ffffff;
+      text-decoration: underline;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>FIFO Page Replacement - Simulation</h2>
+  <p style="font-size: 0.95em; color: #ffffff;">
+  <strong>FIFO (First-In, First-Out)</strong> is a page replacement algorithm that replaces the oldest page in memory first.
+  It treats pages like a queue, the page that came in first is the first to go out.
+  </p>
+  
+  <label>Enter Pages(space separated):</label>
+  <input type="text" id="referenceString" placeholder="eg, 7 0 1 2 0 3 0 4">
+  
+  <label>Enter Number of Frames:</label>
+  <input type="number" id="frameCount" placeholder="eg, 3">
+  
+  <button onclick="startSimulation()">Start</button>
+
+  <div class="steps" id="steps"></div>
+  <div id="total"></div>
+  
+  <div class="back-btn">
+    <a href="index.html">← Back to Home</a>
+  </div>
+</div>
+
+<script>
+let timer;
+function startSimulation() {
+  clearInterval(timer);
+  document.getElementById('steps').innerHTML = '';
+  document.getElementById('total').innerText = '';
+
+  const refInput = document.getElementById('referenceString').value.trim();
+  const frameInput = parseInt(document.getElementById('frameCount').value);
+
+  if (!refInput || isNaN(frameInput) || frameInput <= 0) {
+    alert('Please enter valid inputs.');
+    return;
+  }
+
+  const referenceString = refInput.split(' ').map(Number);
+  const frames = [];
+  const queue = [];
+  let pageFaults = 0;
+  let current = 0;
+
+  timer = setInterval(() => {
+    if (current >= referenceString.length) {
+      clearInterval(timer);
+      document.getElementById('total').innerText = `Total Page Faults: ${pageFaults}`;
+      return;
+    }
+
+    const page = referenceString[current];
+    let hit = frames.includes(page);
+
+    if (!hit) {
+      pageFaults++;
+      if (frames.length < frameInput) {
+        frames.push(page);
+        queue.push(page);
+      } else {
+        const removed = queue.shift();
+        const indexToReplace = frames.indexOf(removed);
+        frames[indexToReplace] = page;
+        queue.push(page);
+      }
+    }
+
+    const stepDiv = document.createElement('div');
+    stepDiv.innerHTML = `
+      <strong>Step ${current + 1}:</strong> Page ${page} - 
+      <span class="${hit ? 'hit' : 'miss'}">${hit ? 'HIT' : 'MISS'}</span>
+      <div class="frame">
+        ${frames.map(f => `<div>${f}</div>`).join('')}
+      </div>
+    `;
+    document.getElementById('steps').appendChild(stepDiv);
+
+    current++;
+  }, 1000);
+}
+</script>
+
+</body>
+</html>
